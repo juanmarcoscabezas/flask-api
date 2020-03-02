@@ -11,7 +11,6 @@ class UserLogin(Resource):
         data = PARSER.parse_args()
         user = UserModel(data.email, data.password)
         res = user.check_password()
-        print(res)
         if not res['error']:
             res['message']['access_token'] = create_access_token(identity=user.email)
             res['message']['refresh_token'] = create_refresh_token(identity=user.email)
