@@ -17,8 +17,10 @@ APP.config['JWT_SECRET_KEY'] = 'secret-key'
 MONGO.init_app(APP)
 JWT = JWTManager(APP)
 
-def unauthorized(err):
-    return make_response({'message': 'missing authorization header'}, 401)
+def unauthorized(message):
+    """Mesage error when the user doesn't have token"""
+    message = 'missing authorization header'
+    return make_response({'message': message}, 401)
 
 JWT.unauthorized_loader(unauthorized)
 
