@@ -6,6 +6,7 @@ from models.project import ProjectModel
 PARSER = reqparse.RequestParser()
 PARSER.add_argument('title', help='This field cannot be blank', required=True)
 PARSER.add_argument('description', help='This field cannot be blank', required=True)
+PARSER.add_argument('tasks', help='This field cannot be blank', required=False)
 
 class Projects(Resource):
     """This class handles Projects requests"""
@@ -36,7 +37,13 @@ class Project(Resource):
     @jwt_required
     def put(self, _id):
         """this method updates a Project by id"""
+        data = PARSER.parse_args()
+        print(data)
+        res = ProjectModel.find_one_and_update(_id, data)
+        return {'message': res['message']}
 
     @jwt_required
     def delete(self, _id):
         """this method delete a Project by id"""
+        res = ProjectModel.find_one_and_delete(_id)
+        return {'message': res['message']}

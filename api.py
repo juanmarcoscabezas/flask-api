@@ -4,7 +4,7 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 
 from db import MONGO
-from controllers.auth import UserLogin, UserSignup
+from controllers.auth import UserLogin, UserSignup, UserRefreshToken
 from controllers.project import Project, Projects
 
 
@@ -20,13 +20,25 @@ JWT = JWTManager(APP)
 def unauthorized(message):
     """Mesage error when the user doesn't have token"""
     message = 'missing authorization header'
-    return make_response({'message': message}, 401)
-
+    return make_response({'message': {'error': message}}, 401)
 JWT.unauthorized_loader(unauthorized)
 
+def expired(message):
+    """Mesage error when the token has expired"""
+    message = 'token has expired'
+    return make_response({'message': {'error': message}}, 401)
+JWT.expired_token_loader(expired)
 
-API.add_resource(UserLogin, '/login')
-API.add_resource(UserSignup, '/signup')
+def invalid(message):
+    """Mesage error when the token is invalid"""
+    message = 'signature verification failed'
+    return make_response({'message': {'error': message}}, 422)
+JWT.invalid_token_loader(invalid)
+
+
+API.add_resource(UserLogin, '/auth/login')
+API.add_resource(UserSignup, '/auth/signup')
+API.add_resource(UserRefreshToken, '/auth/refresh-token')
 API.add_resource(Projects, '/projects')
 API.add_resource(Project, '/projects/<string:_id>')
 

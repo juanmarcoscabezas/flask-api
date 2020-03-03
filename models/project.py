@@ -1,4 +1,5 @@
 """ProjectModel Module"""
+from flask import jsonify
 from bson.objectid import ObjectId
 from db import MONGO
 
@@ -31,11 +32,32 @@ class ProjectModel:
         """This method finds a Project by id"""
         try:
             project = MONGO.db.projects.find_one_or_404({'_id': ObjectId(_id)})
-            print(project)
             project['_id'] = str(project['_id'])
             return {'error': False, 'message': {'project': project}}
         except:
-            return {'error': False, 'message': {'project': {}}}
+            return {'error': True, 'message': {'project': {}}}
+
+    @classmethod
+    def find_one_and_update(cls, _id, data):
+        """This method finds a Project by id and updates it"""
+        try:
+            MONGO.db.projects.update_one({'_id': ObjectId(_id)}, {'$set': data})
+            project = MONGO.db.projects.find_one({'_id': ObjectId(_id)})
+            project['_id'] = str(project['_id'])
+            return {'error': False, 'message': {'project': project}}
+        except Exception as ex:
+            print(ex)
+            return {'error': True, 'message': {'project': {}}}
+    
+    @classmethod
+    def find_one_and_delete(cls, _id):
+        """This method finds a Project by id and deletes it"""
+        try:
+            res = MONGO.db.projects.delete_one({'_id': ObjectId(_id)})
+            return {'error': False, 'message': {'success': 'project deleted'}}
+        except Exception as ex:
+            print(ex)
+            return {'error': True, 'message': {'error': 'project not deleted'}}
 
     def insert(self):
         """This method creates a Project"""

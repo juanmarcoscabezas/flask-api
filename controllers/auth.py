@@ -1,6 +1,6 @@
 """Auth Module"""
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_refresh_token_required, get_jwt_identity
 from models.user import UserModel
 
 
@@ -33,3 +33,11 @@ class UserSignup(Resource):
             res['message']['refresh_token'] = create_refresh_token(identity=user.email)
             return {'message': res['message']}
         return {'message': res['message']}
+
+class UserRefreshToken(Resource):
+    """This class handles user refresh token"""
+    @jwt_refresh_token_required
+    def post(self):
+        """This method creates a new Token"""
+        current_user = get_jwt_identity()
+        return {'message': {'access_token': create_access_token(identity=current_user)}}
