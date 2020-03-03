@@ -17,12 +17,21 @@ class Projects(Resource):
     def post(self):
         data = PARSER.parse_args()
         owner = get_jwt_identity()
-        print(owner)
         project = ProjectModel(data.title, data.description, owner)
         res = project.insert()
         return {'message': res['message']}
 
 class Project(Resource):
-    def get(self):
+    @jwt_required
+    def get(self, _id):
+        res = ProjectModel.findOne(_id)
+        return {'message': res['message']}
+
+    @jwt_required
+    def put(self, _id):
+        pass
+
+    @jwt_required
+    def delete(self, _id):
         pass
 

@@ -26,6 +26,7 @@ JWT.unauthorized_loader(unauthorized)
 API.add_resource(UserLogin, '/login')
 API.add_resource(UserSignup, '/signup')
 API.add_resource(Projects, '/projects')
+API.add_resource(Project, '/projects/<string:_id>')
 
 if __name__ == '__main__':
     APP.run(debug=True)

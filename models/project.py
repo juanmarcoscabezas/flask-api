@@ -1,4 +1,5 @@
 from db import MONGO
+from bson.objectid import ObjectId
 
 class ProjectModel:
 
@@ -20,6 +21,16 @@ class ProjectModel:
                 project['_id'] = str(project['_id'])
             projects.append(project)
         return {'error': False, 'message': {'projects': projects}}
+    
+    @classmethod
+    def findOne(self, _id):
+        try:
+            project = MONGO.db.projects.find_one_or_404({'_id': ObjectId(_id)})
+            print(project)
+            project['_id'] = str(project['_id'])
+            return {'error': False, 'message': {'project': project}}
+        except:
+            return {'error': False, 'message': {'project': {}}}
 
     def insert(self):
         project_exist = MONGO.db.projects.find_one({'title': self.title, 'owner': self.owner})
